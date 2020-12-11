@@ -53,3 +53,140 @@ typescript의 설정을 바꾸고 싶으면 tsconfig.json에서 고치고, libra
 ## 8-4 React State and Typescript
 
 Typescript 로 React app 을 좀 더 좋게 만들기 위한 방법
+
+#12/11일 공부내용
+
+## 8-4 React State and Typescript
+
+typescript는 component에게 state를 줘야한다.
+
+## 8-5 React Props and Typescript
+
+props 와 state 를 같이 쓰는 방법
+Functional Component를 어떻게 쓰는지
+
+**Number.tsx**
+
+```
+import React from "react";
+import styled from "styled-components";
+const Container = styled.span``;
+interface IProps {
+  count: number;
+}
+const Number: React.FunctionComponent<IProps> = ({ count }) => (
+  <Container>{count}</Container>
+);
+export default Number;
+```
+
+**App.tsx**
+
+```
+import React, { Component } from "react";
+import Number from "./Number";
+interface IState {
+  counter: number;
+}
+class App extends Component<{}, IState> {
+  state = {
+    counter: 0,
+  };
+  render() {
+    const { counter } = this.state;
+    return (
+      <div>
+        <Number count={counter} />
+        <button onClick={this.add}>Add</button>
+      </div>
+    );
+  }
+  add = () => {
+    this.setState((prev) => {
+      return {
+        counter: prev.counter + 1,
+      };
+    });
+  };
+}
+export default App;
+```
+
+## 8-6 React Events and Typescript
+
+**Input.tsx**
+
+```
+import React from "react";
+interface IInputProps {
+  value: string;
+  onChange: (event: React.SyntheticEvent<HTMLInputElement>) => void;
+}
+export const Input: React.FunctionComponent<IInputProps> = ({
+  value,
+  onChange,
+}) => (
+  <input type="text" placeholder="Name" value={value} onChange={onChange} />
+);
+interface IFormProps {
+  onFormSubmit: (event: React.FormEvent) => void;
+}
+export const Form: React.FunctionComponent<IFormProps> = ({
+  children,
+  onFormSubmit,
+}) => <form onSubmit={onFormSubmit}>{children}</form>;
+```
+
+**App.tsx**
+
+```
+import React, { Component } from "react";
+import { Input } from "./Input";
+import { Form } from "./Input";
+import Number from "./Number";
+interface IState {
+  counter: number;
+  name: string;
+}
+class App extends Component<{}, IState> {
+  state = {
+    counter: 0,
+    name: "",
+  };
+  render() {
+    const { counter, name } = this.state;
+    return (
+      <div>
+        <Form onFormSubmit={this.onFormSubmit}>
+          <Input value={name} onChange={this.onChange} />
+        </Form>
+        <Number count={counter} />
+        <button onClick={this.add}>Add</button>
+      </div>
+    );
+  }
+  onChange = (event: React.SyntheticEvent<HTMLInputElement>) => {
+    console.log(event.target);
+  };
+  onFormSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+  };
+  add = () => {
+    this.setState((prev) => {
+      return {
+        counter: prev.counter + 1,
+      };
+    });
+  };
+}
+export default App;
+```
+
++내껀 왜 그런지 모르겠지만
+tsconfig.json에서
+
+```
+"jsx": "react"
+```
+
+이걸 변경해줘야 컴파일이 제대로 된다.
